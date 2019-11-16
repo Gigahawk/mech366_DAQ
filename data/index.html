@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>MECH366 DAQ</title>
+        <script src="WebSocket.js" type="text/javascript"></script>
+    </head>
+    <body>
+        <p id="loaded_file">No file loaded</p>
+        <p>
+            <form method="post" enctype="multipart/form-data">
+                <input type="file" name="name">
+                <input class="button" type="submit" value="Upload">
+            </form>
+        </p>
+        <p>
+            <button id="ls" class="button" style="background-color:#999" onclick="getFileList();">Get File List</button>
+        </p>
+        <p>
+            <ul id="file_list">
+            </ul>
+        </p>
+    </body>
+</html>

@@ -13,12 +13,19 @@ void startWiFi() { // Start a Wi-Fi access point, and try to connect to some giv
     Serial.println("\r\n");
 }
 
+void startMotor() {
+    motor_running = false;
+    esc.attach(ESC_PIN);
+    Serial.println("Motor driver started.");
+}
+
 void startAccel() {
-    if(!accel.begin()) {
-        Serial.println("No ADXL345 sensor detected.");
-    } else {
-        Serial.println("ADXL345 sensor initialized.");
-    }
+    accel_need_save = false;
+    accel.powerOn();
+    accel.setRate(ACCEL_RATE);
+    // Interrupt driven data collection ftw
+    accel.setInterrupt(ADXL345_INT_DATA_READY_BIT, 1);
+    Serial.println("Accelerometer driver started.");
 }
 
 void startWebSocket() { // Start a WebSocket server

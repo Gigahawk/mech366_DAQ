@@ -1,4 +1,5 @@
 var connection = new WebSocket('ws://'+location.hostname+':81/', ['arduino']);
+var filename = "";
 connection.onopen = function () {
     connection.send("load");
     //connection.send('Connect ' + new Date());
@@ -31,15 +32,25 @@ function handleMessage(msg) {
             });
         document.getElementById("file_list").innerHTML = fileListHTML;
     } else if(msg.startsWith(":load")) {
-        var filename = "No file loaded";
+        filename = "";
+        var status_str = "No file loaded";
         var loaded_file = msg.split(/\r?\n/);
         loaded_file.shift(); // remove the first item
         if(loaded_file.length && loaded_file[0]) {
-            filename = loaded_file[0] + " loaded";
+            filename = loaded_file[0];
+            status_str = filename + " loaded"+
+                "<button class=\"button\" onclick=\"runCar();\">Run</button>";
         }
-        document.getElementById("loaded_file").innerHTML = filename;
+        document.getElementById("loaded_file").innerHTML = status_str;
     } else {
         console.log("Unknown response");
+    }
+}
+
+function runCar(){
+    if(confirm("Are you sure you want to run " + filename)){
+        document.getElementById("loaded_file").innerHTML = "Running " + filename;
+        connection.send("run");
     }
 }
 

@@ -7,12 +7,18 @@
 #include <FS.h>
 #include <Servo.h>
 #include "config.h"
+#include "datastore.h"
 
 
 
-extern char input_buffer[];
+extern Servo esc;
+extern unsigned long data_collect_start;
+extern uint16_t input_buffer[];
 extern char loaded_file[];
+extern bool motor_running;
 
 uint8_t fillBuffer(String path);
+void start_motor();
+void motor_loop();
 
 #endif //MOTORDRIVER_H

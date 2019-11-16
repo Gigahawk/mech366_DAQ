@@ -44,6 +44,10 @@ void handleCommand(uint8_t client_id, char* command) {
         }
         resp = String(":load\r\n") + loaded_file;
         webSocket.sendTXT(client_id, resp);
+    } else if(strcmp(cmd, "run") == 0){
+        Serial.println("Starting run");
+        start_data();
+        start_motor();
     }
     else {
         Serial.printf("Unknown command %s\n", cmd);

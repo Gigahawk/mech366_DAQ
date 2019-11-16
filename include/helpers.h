@@ -5,12 +5,15 @@
 #include "config.h"
 #include "websockets.h"
 #include "webserver.h"
+#include "motordriver.h"
 #include "datastore.h"
 
 void startWiFi();
 void startWebSocket();
 void startSPIFFS();
 void startServer();
+void startAccel();
+void startMotor();
 void startAccel();
 
 #endif //HELPERS_H

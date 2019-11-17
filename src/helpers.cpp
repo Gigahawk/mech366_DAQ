@@ -16,6 +16,7 @@ void startWiFi() { // Start a Wi-Fi access point, and try to connect to some giv
 void startMotor() {
     motor_running = false;
     esc.attach(ESC_PIN);
+    esc.writeMicroseconds(ESC_MIN_PULSE);
     Serial.println("Motor driver started.");
 }
 

@@ -55,7 +55,10 @@ void motor_loop() {
             motor_running = false;
             return;
         }
+        //Serial.print("Writing to esc: ");
+        //Serial.println(input_buffer[motor_cur_time]);
         esc.writeMicroseconds(input_buffer[motor_cur_time]);
+    } else {
+        esc.writeMicroseconds(ESC_MIN_PULSE);
     }
-    esc.writeMicroseconds(ESC_MIN_PULSE);
 }

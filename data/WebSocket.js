@@ -72,6 +72,7 @@ function generateListItem(path) {
         "<input type=\"submit\" value=\"Delete\">" +
         "</form>" +
         "<button class=\"button\" onclick=\"loadFile('" + path + "');\">Load</button>" +
+        "<button class=\"button\" onclick=\"downloadCsv('" + path + "');\">Download CSV</button>" +
         "</li>";
 }
 

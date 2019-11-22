@@ -2,12 +2,12 @@
 #define DATASTORE_H
 #include <Arduino.h>
 #include <FS.h>
-#include <SparkFun_ADXL345.h>
+#include <MPU6050.h>
 #include "config.h"
 #include "motordriver.h"
 
 extern unsigned long data_collect_start;
-extern ADXL345 accel;
+extern MPU6050 accel;
 extern bool collecting_data;
 extern bool accel_need_save;
 

@@ -2,14 +2,15 @@
 - Name: `MECH366DAQ`
 - Password: `fourwordsalluppercase`
 
+# I2C Address
+The default address of the MP6050 is `0x68`
+
 # Wiring Instructions
 | Function | Pin |
 | -------- | --- |
-| `CS`     | D1  |
-| `ESC`    | D2  |
-| `SCK`    | D5  |
-| `MISO`   | D6  |
-| `MOSI`   | D7  |
-| `INT_1`  | D3  |
+| `SCL`    | D1  |
+| `SDA`    | D2  |
+| `INT`    | D5  |
+| ESC      | D4  |
 
 

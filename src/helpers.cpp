@@ -22,10 +22,62 @@ void startMotor() {
 
 void startAccel() {
     accel_need_save = false;
-    accel.powerOn();
-    accel.setRate(ACCEL_RATE);
-    // Interrupt driven data collection ftw
-    accel.setInterrupt(ADXL345_INT_DATA_READY_BIT, 1);
+    Serial.println("Initializing I2C devices...");
+    Wire.begin();
+
+    accel.initialize();
+    pinMode(ACCEL_INT, INPUT);
+    detachInterrupt(digitalPinToInterrupt(ACCEL_INT));
+
+    Serial.println("Testing device connections...");
+    Serial.println(accel.testConnection() ? "MPU6050 connection successful" : "MPU6050 connection failed");
+
+    Serial.println("Updating internal sensor offsets...");
+    accel.setXAccelOffset(ACCEL_X_OFST);
+    accel.setYAccelOffset(ACCEL_Y_OFST);
+    accel.setZAccelOffset(ACCEL_Z_OFST);
+    accel.setXGyroOffset(GYRO_X_OFST);
+    accel.setYGyroOffset(GYRO_Y_OFST);
+    accel.setZGyroOffset(GYRO_Z_OFST);
+    Serial.print(accel.getXAccelOffset()); Serial.print("\t");
+    Serial.print(accel.getYAccelOffset()); Serial.print("\t");
+    Serial.print(accel.getZAccelOffset());
+    Serial.print("\n");
+
+    accel.setRate((8000/ACCEL_RATE) - 1);
+    Serial.print("Current rate: ");
+    Serial.println(8000/(1 + accel.getRate()));
+
+    accel.setInterruptMode(MPU6050_INTMODE_ACTIVELOW);
+    //accel.setInterruptDrive(MPU6050_INTDRV_OPENDRAIN);
+    accel.setInterruptLatch(MPU6050_INTLATCH_WAITCLEAR);
+    accel.setInterruptLatchClear(MPU6050_INTCLEAR_ANYREAD);
+    Serial.println("Getting interrupt pin status: ");
+    Serial.print("Mode: ");
+    Serial.println(accel.getInterruptMode() ? "Active Low" : "Active High");
+    Serial.print("Drive: ");
+    Serial.println(accel.getInterruptDrive() ? "Open drain" : "Push pull");
+    Serial.print("Latch: ");
+    Serial.println(accel.getInterruptLatch() ? "Wait clear" : "50us pulse");
+    Serial.print("Clear: ");
+    Serial.println(accel.getInterruptLatchClear() ? "Any read" : "Status read");
+
+    Serial.println("Getting interrupts: ");
+    //accel.setIntEnabled(MPU6050_INTERRUPT_DATA_RDY_BIT);
+    accel.setIntDataReadyEnabled(true);
+    Serial.print("Freefall: ");
+    Serial.println(accel.getIntFreefallEnabled());
+    Serial.print("Motion: ");
+    Serial.println(accel.getIntMotionEnabled());
+    Serial.print("Zero Motion: ");
+    Serial.println(accel.getIntZeroMotionEnabled());
+    Serial.print("FIFO Overflow: ");
+    Serial.println(accel.getIntFIFOBufferOverflowEnabled());
+    Serial.print("I2C Master: ");
+    Serial.println(accel.getIntI2CMasterEnabled());
+    Serial.print("Data Ready: ");
+    Serial.println(accel.getIntDataReadyEnabled());
+
     Serial.println("Accelerometer driver started.");
 }
 

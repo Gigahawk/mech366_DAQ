@@ -1,24 +1,23 @@
 #include "datastore.h"
-#define BUFFER_LENGTH (uint16_t)(COLLECTION_PERIOD*1.1*ACCEL_RATE)
+#define DS_BUFFER_LENGTH (uint16_t)(1.05*COLLECTION_PERIOD*ACCEL_RATE)
 
-int16_t x_accel[BUFFER_LENGTH];
-int16_t y_accel[BUFFER_LENGTH];
-int16_t z_accel[BUFFER_LENGTH];
-int16_t accel_time[BUFFER_LENGTH];
+int16_t x_accel[DS_BUFFER_LENGTH];
+int16_t y_accel[DS_BUFFER_LENGTH];
+int16_t z_accel[DS_BUFFER_LENGTH];
+int16_t accel_time[DS_BUFFER_LENGTH];
 volatile uint16_t accel_idx;
 
-ADXL345 accel = ADXL345(ACCEL_CS);
+MPU6050 accel = MPU6050(ACCEL_ADDRESS);
 bool collecting_data;
 bool accel_need_save;
 unsigned long data_collect_start;
 volatile unsigned long data_cur_time;
-int read_buffer[3];
 
 void accel_isr();
 
 void reset_data() {
     Serial.println("Clearing accelerometer buffers");
-    for(int i=0; i < BUFFER_LENGTH; i++) {
+    for(int i=0; i < DS_BUFFER_LENGTH; i++) {
         x_accel[i] = 0;
         y_accel[i] = 0;
         z_accel[i] = 0;
@@ -33,7 +32,8 @@ void start_data() {
     attachInterrupt(
             digitalPinToInterrupt(ACCEL_INT),
             accel_isr,
-            RISING);
+            FALLING);
+    accel_isr();
 }
 
 String generateFilename() {
@@ -44,8 +44,6 @@ String generateFilename() {
 
     return filename;
 }
-
-
 
 void save_data() {
     String filename = generateFilename();
@@ -58,10 +56,9 @@ void save_data() {
         Serial.println("file open failed");
         return;
     }
-    for(int i=0; i < BUFFER_LENGTH; i++) {
+    for(int i=0; i < DS_BUFFER_LENGTH; i++) {
         txyz[0] = accel_time[i];
         txyz[1] = x_accel[i];
-        txyz[1]++;
         txyz[2] = y_accel[i];
         txyz[3] = z_accel[i];
         xyz_file.write((uint8_t*)txyz, 8);
@@ -75,7 +72,6 @@ void stop_data() {
     accel_need_save = true;
 }
 
-
 void accel_loop() {
     if(accel_need_save) {
         save_data();
@@ -85,15 +81,12 @@ void accel_loop() {
 
 void ICACHE_RAM_ATTR accel_isr() {
     data_cur_time = millis() - data_collect_start;
-    if(data_cur_time >= COLLECTION_PERIOD*1000 || accel_idx >= BUFFER_LENGTH) {
+    if(data_cur_time >= COLLECTION_PERIOD*1000 || accel_idx >= DS_BUFFER_LENGTH) {
         stop_data();
         return;
     }
 
-    accel.readAccel(read_buffer + 0, read_buffer + 1, read_buffer + 2);
-    x_accel[accel_idx] = (int16_t)read_buffer[0];
-    y_accel[accel_idx] = (int16_t)read_buffer[1];
-    z_accel[accel_idx] = (int16_t)read_buffer[2];
+    accel.getAcceleration(x_accel + accel_idx, y_accel + accel_idx, z_accel + accel_idx);
     accel_time[accel_idx] = data_cur_time;
     accel_idx++;
 }

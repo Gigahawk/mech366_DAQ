@@ -11,7 +11,7 @@ function load(url, callback) {
 function downloadCsv(link) {
     load(link, function(contents) {
         var filename = link + ".csv";
-        var values = new Uint16Array(contents);
+        var values = new Int16Array(contents);
         var t,x,y,z;
         var csv = "time, x, y, z\n";
         var cur_line = "";

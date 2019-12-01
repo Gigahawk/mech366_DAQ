@@ -27,7 +27,7 @@
 #define GYRO_Z_OFST 18
 
 // ESC "servo" pin
-#define ESC_PIN D4
+#define ESC_PIN D6
 
 // Pulse width for ESC control (microseconds)
 #define ESC_MIN_PULSE 1500 // Should be zero speed

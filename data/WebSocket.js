@@ -1,5 +1,7 @@
 var connection = new WebSocket('ws://'+location.hostname+':81/', ['arduino']);
 var filename = "";
+var jogging = false;
+var jog_forwards = false;
 connection.onopen = function () {
     connection.send("load");
     //connection.send('Connect ' + new Date());
@@ -54,6 +56,31 @@ function runCar(){
     }
 }
 
+function start_jog_f(obj) {
+    obj.style.backgroundColor = "#1EC5E5";
+    jogging = true;
+    jog_forwards = true;
+}
+
+function start_jog_b(obj) {
+    obj.style.backgroundColor = "#1EC5E5";
+    jogging = true;
+    jog_forwards = false;
+}
+
+function stop_jog(obj) {
+    obj.style.backgroundColor = "#D94A38";
+    jogging = false;
+    connection.send("jog s");
+}
+
+function jogCar() {
+    if(jog_forwards)
+        connection.send("jog f");
+    else
+        connection.send("jog b");
+}
+
 function loadFile(path) {
     if(confirm("Are you sure you want to load " + path)){
         connection.send("load " + path);
@@ -75,5 +102,12 @@ function generateListItem(path) {
         "<button class=\"button\" onclick=\"downloadCsv('" + path + "');\">Download CSV</button>" +
         "</li>";
 }
+
+window.setInterval(() => {
+    if(connection.readyState != WebSocket.OPEN)
+        return;
+    if(jogging)
+        jogCar();
+}, 175);
 
 

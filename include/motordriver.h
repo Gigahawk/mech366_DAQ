@@ -20,5 +20,7 @@ extern bool motor_running;
 uint8_t fillBuffer(String path);
 void start_motor();
 void motor_loop();
+void start_jog(bool forwards);
+void stop_jog();
 
 #endif //MOTORDRIVER_H

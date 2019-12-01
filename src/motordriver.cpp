@@ -1,10 +1,17 @@
 #include "motordriver.h"
 
+#define ESC_JOG_FORWARDS (int)(ESC_JOG_LEVEL*(ESC_MAX_PULSE - ESC_MIN_PULSE))
+#define ESC_JOG_BACKWARDS (int)(ESC_JOG_LEVEL*(ESC_MIN_PULSE - ESC_NEG_PULSE))
+
 uint16_t input_buffer[COLLECTION_PERIOD*1000];
 char loaded_file[32];
 
 Servo esc;
 bool motor_running;
+bool motor_jogging;
+bool jog_forwards;
+unsigned long motor_jog_start;
+unsigned long motor_jog_time;
 unsigned long motor_cur_time;
 
 void init_input_buffer() {
@@ -47,18 +54,39 @@ uint8_t fillBuffer(String path) {
     return LOAD_SUCCESS;
 }
 
+void start_jog(bool forwards) {
+    motor_jog_start = millis();
+    jog_forwards = forwards;
+    motor_jogging = true;
+}
+
+void stop_jog() {
+    motor_jogging = false;
+}
+
 void motor_loop() {
-    motor_cur_time = millis() - data_collect_start;
     if(motor_running){
+        motor_cur_time = millis() - data_collect_start;
         if(motor_cur_time > COLLECTION_PERIOD*1000) {
             stop_data();
             motor_running = false;
             return;
         }
-        //Serial.print("Writing to esc: ");
-        //Serial.println(input_buffer[motor_cur_time]);
         esc.writeMicroseconds(input_buffer[motor_cur_time]);
+    } else if(motor_jogging) {
+        motor_jog_time = millis() - motor_jog_start;
+        if(motor_jog_time > ESC_JOG_TIMEOUT) {
+            esc.writeMicroseconds(ESC_MIN_PULSE);
+            motor_jogging = false;
+            return;
+        }
+        if(jog_forwards) {
+            esc.writeMicroseconds(ESC_JOG_FORWARDS);
+        } else {
+            esc.writeMicroseconds(ESC_JOG_BACKWARDS);
+        }
     } else {
         esc.writeMicroseconds(ESC_MIN_PULSE);
     }
+
 }

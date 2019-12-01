@@ -21,5 +21,21 @@
             <ul id="file_list">
             </ul>
         </p>
+        <p>
+            <div
+              unselectable="on"
+              onpointerdown="start_jog_f(this);"
+              onpointerup="stop_jog(this);"
+              style="border-style:solid;background-color:#D94A38;width:90px;height:20px;padding:30px;user-select: none;">
+                Jog forwards
+            </div>
+            <div
+              unselectable="on"
+              onpointerdown="start_jog_b(this);"
+              onpointerup="stop_jog(this);"
+              style="border-style:solid;background-color:#D94A38;width:90px;height:20px;padding:30px;user-select: none;">
+                Jog backwards
+            </div>
+        </p>
     </body>
 </html>

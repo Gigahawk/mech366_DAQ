@@ -48,8 +48,18 @@ void handleCommand(uint8_t client_id, char* command) {
         Serial.println("Starting run");
         start_data();
         start_motor();
-    }
-    else {
+    } else if(strcmp(cmd, "jog") == 0) {
+        if(strcmp(arg, "f") == 0) {
+            Serial.println("Jogging forwards");
+            start_jog(true);
+        } else if(strcmp(arg, "b") == 0) {
+            Serial.println("Jogging backwards");
+            start_jog(false);
+        } else {
+            Serial.println("Stopping jog");
+            stop_jog();
+        }
+    } else {
         Serial.printf("Unknown command %s\n", cmd);
     }
 }

@@ -32,5 +32,8 @@
 // Pulse width for ESC control (microseconds)
 #define ESC_MIN_PULSE 1500 // Should be zero speed
 #define ESC_MAX_PULSE 2000
+#define ESC_NEG_PULSE 1000 // Should be max negative speed
+#define ESC_JOG_LEVEL 0.5 // Percentage of max speed for jog
+#define ESC_JOG_TIMEOUT 200 // Max timing interval between jog requests (ms)
 
 #endif //CONFIG_H

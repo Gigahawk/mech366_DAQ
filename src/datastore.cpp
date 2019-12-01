@@ -10,6 +10,7 @@ volatile uint16_t accel_idx;
 MPU6050 accel = MPU6050(ACCEL_ADDRESS);
 bool collecting_data;
 bool accel_need_save;
+bool imu_connected = false;
 unsigned long data_collect_start;
 volatile unsigned long data_cur_time;
 

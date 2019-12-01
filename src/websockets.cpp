@@ -42,7 +42,7 @@ void handleCommand(uint8_t client_id, char* command) {
             Serial.println(arg);
             fillBuffer(arg);
         }
-        resp = String(":load\r\n") + loaded_file;
+        resp = String(":load\r\n") + loaded_file + String("\r\n") + (imu_connected ? "true":"false");
         webSocket.sendTXT(client_id, resp);
     } else if(strcmp(cmd, "run") == 0){
         Serial.println("Starting run");

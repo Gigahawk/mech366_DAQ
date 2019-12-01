@@ -1,21 +1,24 @@
-var connection = new WebSocket('ws://'+location.hostname+':81/', ['arduino']);
+var connection;
+window.addEventListener("load", () => {
+    connection = new WebSocket('ws://'+location.hostname+':81/', ['arduino']);
+    connection.onopen = function () {
+        connection.send("load");
+        //connection.send('Connect ' + new Date());
+    };
+    connection.onerror = function (error) {
+        console.log('WebSocket Error ', error);
+    };
+    connection.onmessage = function (e) {
+        console.log('Server: ', e.data);
+        handleMessage(e.data)
+    };
+    connection.onclose = function(){
+        console.log('WebSocket connection closed');
+    };
+});
 var filename = "";
 var jogging = false;
 var jog_forwards = false;
-connection.onopen = function () {
-    connection.send("load");
-    //connection.send('Connect ' + new Date());
-};
-connection.onerror = function (error) {
-    console.log('WebSocket Error ', error);
-};
-connection.onmessage = function (e) {
-    console.log('Server: ', e.data);
-    handleMessage(e.data)
-};
-connection.onclose = function(){
-    console.log('WebSocket connection closed');
-};
 
 function getFileList() {
     console.log("Getting file list");
@@ -28,6 +31,7 @@ function handleMessage(msg) {
         var files = msg.split(/\r?\n/);
         files.shift(); // remove the first item
         var fileListHTML = "";
+        files.sort();
         files.forEach(
             (f) => {
                 fileListHTML += generateListItem(f);
@@ -36,6 +40,7 @@ function handleMessage(msg) {
     } else if(msg.startsWith(":load")) {
         filename = "";
         var status_str = "No file loaded";
+        var imu_status_str = "unknown";
         var loaded_file = msg.split(/\r?\n/);
         loaded_file.shift(); // remove the first item
         if(loaded_file.length && loaded_file[0]) {
@@ -43,7 +48,11 @@ function handleMessage(msg) {
             status_str = filename + " loaded"+
                 "<button class=\"button\" onclick=\"runCar();\">Run</button>";
         }
+        if(loaded_file.length > 1 && loaded_file[1]) {
+            imu_status_str = loaded_file[1];
+        }
         document.getElementById("loaded_file").innerHTML = status_str;
+        document.getElementById("imu_status").innerHTML = imu_status_str;
     } else {
         console.log("Unknown response");
     }

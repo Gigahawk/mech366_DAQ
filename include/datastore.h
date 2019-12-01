@@ -8,6 +8,7 @@
 
 extern unsigned long data_collect_start;
 extern MPU6050 accel;
+extern bool imu_connected;
 extern bool collecting_data;
 extern bool accel_need_save;
 

@@ -30,7 +30,13 @@ void startAccel() {
     detachInterrupt(digitalPinToInterrupt(ACCEL_INT));
 
     Serial.println("Testing device connections...");
-    Serial.println(accel.testConnection() ? "MPU6050 connection successful" : "MPU6050 connection failed");
+    if(accel.testConnection()) {
+        Serial.println("MPU6050 connection successful");
+        imu_connected = true;
+    } else {
+        Serial.println("MPU6050 connection failed");
+        imu_connected = false;
+    }
 
     Serial.println("Updating internal sensor offsets...");
     accel.setXAccelOffset(ACCEL_X_OFST);
